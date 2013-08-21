@@ -13,6 +13,8 @@ var assert = require('assert')
   , async = require('async')
   , log = console.log
   , node
+  , strCmp = require('../lib/str_cmp')
+  , TrivialStore = require('../lib/trivial_store')
 
 function usage(msgs, xit) {
   if (typeof msgs === 'string') msgs = [msgs]
@@ -92,13 +94,15 @@ var displayNode = (
 )()
 
 
-var tree = new BpTree(4)
+var trivialStore = new TrivialStore()
+  , order = 3
+  , tree = new BpTree(order, trivialStore, strCmp)
   , strSeed = ""
   , keys = []
   , dKeys
 
 for (var ki = 0; ki<numEnts; ki++)
-  keys.push( new Key.Utf8Str( strSeed = incStr(strSeed) ) )
+  keys.push( strSeed = incStr(strSeed) )
 //for (var ki = 0; ki<numEnts; ki++)
 //  console.log("key[%d] = %s", ki, keys[ki])
 
@@ -127,12 +131,12 @@ var delSteps = dKeys
                  }
                })
   , buildTree =  function(scb){
-      console.log("Build Tree: w/4 tree.put() calls")
+      console.log("Build Tree: %d tree.put() calls", keys.length)
       console.log("----------")
       var i=0
       async.whilst(
         /*test*/
-        function(){ return i<keys.length }
+        function(){ return i < keys.length }
         /*body*/
       , function(next) {
           var iKey = keys[i]

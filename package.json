@@ -1,6 +1,6 @@
 {
   "name"        : "BpTree"
-, "version"     : "0.1.0"
+, "version"     : "0.2.0"
 , "description" : "A file based implementation of a B+Tree"
 , "keywords"    : ["tree", "b+tree", "index"]
 , "homepage"    : "https://github/com/lleo/node-bptree"
@@ -8,13 +8,14 @@
                   , "url": "https://github.com/lleo/node-bptree" }
 , "bug"         : { "url": "https://github.com/lleo/node-bptree/issues"
                   , "email": "lleoem@gmail.com" }
-, "author"      : { "name": "LLeo"
+, "author"      : { "name" : "LLeo"
                   , "email": "lleoem@gmail.com"
-                  , "url": "http://lleo-blog.blogspot.com/" }
+                  , "url"  : "http://lleo-blog.blogspot.com/" }
 , "main"        : "lib/index.js"
 , "scripts"     : { "test" : "mocha -R spec -s 1" }
-, "dependencies": { "async"  : ">=0.2.6"
-		  , "lodash" : ">=1.0.1" }
+, "dependencies": { "async"      : ">=0.2.6"
+		  , "lodash"     : ">=1.0.1"
+		  , "msgpack-js" : ">=0.3.0" }
 , "devDependencies": { "mocha" : "*"
 		     , "chai"  : "*" }
 , "engines"     : { "node" : ">=0.4.0" }
