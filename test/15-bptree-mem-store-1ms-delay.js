@@ -1,7 +1,10 @@
 /* global describe it */
 
+"use strict";
+
 var assert = require('assert')
   , BpTree = require('..')
+  , MemStore = require('../lib/mem_store')
   , Leaf = BpTree.Leaf
   , u = require('lodash')
   , async = require('async')
@@ -15,8 +18,8 @@ describe("BpTree", function(){
     , key = cur.toString()
     , val = cur
 
-  describe("Constructor", function(){
-    tree = new BpTree(order)
+  describe("Constructor w/MemStore", function(){
+    tree = new BpTree(order, null, new MemStore(1))
 
     it("should construct an object", function(){
       assert.ok(tree instanceof BpTree)
@@ -133,6 +136,8 @@ describe("BpTree", function(){
 
           //use the last key/val pair
           tree.findLeaf(key, function(err, leaf, path){
+            if (err) { next(err); return }
+
             if (path.length != 2)
               next(new Error("path is not 2"))
             else

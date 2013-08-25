@@ -13,8 +13,14 @@ var assert = require('assert')
   , async = require('async')
   , log = console.log
   , node
-  , strCmp = require('../lib/str_cmp')
-  , TrivialStore = require('../lib/trivial_store')
+  , randOps = require('../lib/rand_ops')
+  , rand = randOps.rand
+  , randInt = randOps.randInt
+  , randomize = randOps.randomize
+  , strOps = require('../lib/str_ops')
+  , strCmp = strOps.cmp
+  , incStr = strOps.inc
+  , multStr = strOps.repeat
 
 function usage(msgs, xit) {
   if (typeof msgs === 'string') msgs = [msgs]
@@ -31,52 +37,6 @@ if (numEnts % 1 != 0) usage(format("numEnts not an Integer %d", numEnts), 1)
 console.log("numEnts = %d", numEnts)
 //process.exit(0)
 
-function rand(n) { return Math.random() * n } // [0,n)
-function randInt(n) { return Math.floor( rand(n) ) } //[0,n)
-function randomize(arr) {
-  var i, ri, idx = []
-  for (i=0; i<arr.length; i++) idx.push(i)
-
-  function swap(a, b){
-    var t = arr[a]
-    arr[a] = arr[b]
-    arr[b] = t
-  }
-
-  for(i=0; i<arr.length; i++) {
-    ri = idx[randInt(idx.length)]
-    idx.splice(ri,1)
-    swap(i, ri)
-  }
-}
-
-function incStr(str){
-  if (str.length == 0) return "a"
-
-  var last = str[str.length-1]
-    , rest = str.substr(0, str.length-1)
-
-  if (last == "z") {
-    if (rest.length == 0) return "aa"
-    else return incStr(rest) + "a"
-  }
-  if (last == "Z") {
-    if (rest.length == 0) return "AA"
-    else return incStr(rest) + "A"
-  }
-  if (last == "9") {
-    if (rest.length == 0) return "10"
-    else return incStr(rest) + "0"
-  }
-
-  return rest + String.fromCharCode( last.charCodeAt(0)+1 )
-}
-
-function multStr(str, times){
-  return Array((times?times:0)+1).join(str)
-}
-
-//DEL:function throwErr(err) { if (err) throw err }
 function logStr(err, str) {
   if (err) throw err
   console.log(str)
@@ -93,10 +53,8 @@ var displayNode = (
   }
 )()
 
-
-var trivialStore = new TrivialStore()
-  , order = 3
-  , tree = new BpTree(order, trivialStore, strCmp)
+var order = 3
+  , tree = new BpTree(order)
   , strSeed = ""
   , keys = []
   , dKeys
@@ -107,7 +65,7 @@ for (var ki = 0; ki<numEnts; ki++)
 //  console.log("key[%d] = %s", ki, keys[ki])
 
 dKeys = u.clone(keys)
-randomize(dKeys)
+//randomize(dKeys)
 
 //console.log( "[ %s ].length = %d"
 //           , keys.map(function(k){return k.toString()}).join("\n, ")
@@ -124,10 +82,14 @@ var delSteps = dKeys
                    console.log("Modify Tree")
                    console.log("-----------")
                    console.log("tree.del(%s)", key)
-                   tree.del(key, function(err){
-                     if (err) { scb(err); return }
-                     tree.traverseInOrder(displayNode, scb)
-                   })
+
+                   //delay this del & display to allow stdout to flush
+                   setTimeout(function(){
+                     tree.del(key, function(err){
+                       if (err) { scb(err); return }
+                       tree.traverseInOrder(displayNode, scb)
+                     })
+                   }, 100)
                  }
                })
   , buildTree =  function(scb){

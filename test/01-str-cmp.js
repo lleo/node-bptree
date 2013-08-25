@@ -5,12 +5,12 @@ var assert = require('assert')
 
 describe("strCmp - string compare funciton", function(){
   describe("comparing via string length first!", function(){
-    it("\"aa\" > \"b\" => 1" , function(){
-      assert.equal( strCmp("aa", "b"), 1 )
+    it("\"aa\" < \"b\" => -1" , function(){
+      assert.equal( strCmp("aa", "b"), -1 )
     })
 
-    it("\"b\" < \"aa\" => -1" , function(){
-      assert.equal( strCmp("b", "aa"), -1 )
+    it("\"b\" > \"aa\" => 1" , function(){
+      assert.equal( strCmp("b", "aa"), 1 )
     })
   })
 
