@@ -21,6 +21,7 @@ var assert = require('assert')
   , strCmp = strOps.cmp
   , incStr = strOps.inc
   , multStr = strOps.repeat
+  , MemStore = require('../lib/mem_store')
 
 function usage(msgs, xit) {
   if (typeof msgs === 'string') msgs = [msgs]
@@ -54,7 +55,8 @@ var displayNode = (
 )()
 
 var order = 3
-  , tree = new BpTree(order)
+  , ms = new MemStore(1)
+  , tree = new BpTree(order, strCmp, ms)
   , strSeed = ""
   , keys = []
   , dKeys
