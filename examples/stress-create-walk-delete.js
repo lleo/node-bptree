@@ -21,6 +21,7 @@ var assert = require('assert')
   , strCmp = strOps.cmp
   , incStr = strOps.inc
   , multStr = strOps.repeat
+  , TrivialStore = require('../lib/trivial_store')
   , MemStore = require('../lib/mem_store')
 
 function usage(msgs, xit) {
@@ -55,8 +56,9 @@ var displayNode = (
 )()
 
 var order = 3
-  , ms = new MemStore(1)
-  , tree = new BpTree(order, strCmp, ms)
+  , st = new MemStore()
+  //, st = new TrivialStore()
+  , tree = new BpTree(order, strCmp, st)
   , strSeed = ""
   , keys = []
   , dKeys
