@@ -35,17 +35,19 @@ var keyOrder = function(s){
 
 cmdLine
 .version('0.0.1')
+.option('-o|--order <n>', 'order of the BpTree', parseInt, 3)
 .option('-n|--number <n>', 'Number of Key/Val pairs', parseInt, 10)
 .option('-d|--deletion [key-order]', "Order of deletion: inorder, (rev)erse, (rand)omize", keyOrder, 'inorder')
 .option('-i|--insertion [key-order]', "Order of insertion: inorder, (rev)erse, (rand)omize", keyOrder, 'inorder')
 .option('-D|--delay-delete <ms>', "Delay each delete (milliseconds)", -1, parseInt)
 .option('--no-display-delete', "Don't display the tree after each delete")
-//.option('--display-delete', "Don't display the tree after each delete")
 .parse(process.argv)
 
+console.log("order             = %d", cmdLine.order)
 console.log("number            = %d", cmdLine.number)
 console.log("insertion         = %s", cmdLine.insertion)
 console.log("deletion          = %s", cmdLine.deletion)
+console.log("delay-delete      = %d", cmdLine.delayDelete)
 console.log("display-delete    = %j", cmdLine.displayDelete)
 //process.exit(0)
 
@@ -60,7 +62,12 @@ var displayNode = (
   }
 )()
 
-var order = 3
+var order = cmdLine.order
+  , numEnts = cmdLine.number
+  , insOrder = cmdLine.insertion
+  , delOrder = cmdLine.deletion
+  , delayDelete = cmdLine.delayDelete
+  , displayDelete = cmdLine.displayDelete
   //, st = new MemStore()
   //, st = new TrivialStore()
   //, tree = new BpTree(order, strCmp, st)
@@ -70,22 +77,22 @@ var order = 3
   , kv = {}
   , dKeys, iKeys
 
-for (var ki = 0; ki<cmdLine.number; ki++){
+for (var ki = 0; ki<numEnts; ki++){
   keys.push( _key = incStr(_key) )
   kv[_key] = ki
 }
 
 
 iKeys = u.clone(keys)
-if (cmdLine.insertion == "randomize")
+if (insOrder == "randomize")
   randomize(iKeys)
-else if (cmdLine.insertion == "reverse")
+else if (insOrder == "reverse")
   iKeys.reverse()
 
 dKeys = u.clone(keys)
-if (cmdLine.deletion == "randomize")
+if (delOrder == "randomize")
   randomize(dKeys)
-else if (cmdLine.deletion == "reverse")
+else if (delOrder == "reverse")
   dKeys.reverse()
 
 var buildTree =  function(scb){
@@ -120,10 +127,10 @@ var buildTree =  function(scb){
       , function(k, ecb){
           console.log("tree.del(%s)", k)
 
-          if (cmdLine.delayDelete < 0) {
+          if (delayDelete < 0) {
             tree.del(k, function(err){
               if (err) { ecb(err); return }
-              if (cmdLine.displayDelete)
+              if (displayDelete)
                 tree.traverseInOrder(displayNode, function(err, res){
                   console.log("")
                   ecb(err, res)
@@ -136,7 +143,7 @@ var buildTree =  function(scb){
             setTimeout(function(){
               tree.del(k, function(err){
                 if (err) { ecb(err); return }
-                if (cmdLine.displayDelete)
+                if (displayDelete)
                   tree.traverseInOrder(displayNode, function(err, res){
                     console.log("")
                     ecb(err, res)
@@ -144,7 +151,7 @@ var buildTree =  function(scb){
                 else
                   ecb()
               })
-            }, cmdLine.delayDelete)
+            }, delayDelete)
           }
         }
       , function(err){
