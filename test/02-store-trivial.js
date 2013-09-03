@@ -23,11 +23,6 @@ describe("TrivalStore", function(){
     })
 
     var testHdl = new Handle(1)
-      , testHdlBuf = new Buffer( 1 )
-
-    it("Handle.unpack() should throw", function(){
-      assert.throws( function(){ Handle.unpack(testHdl, 0) } )
-    })
 
     it("cur.cmp(next) should return -1", function(){
       assert.equal( testHdl.cmp( new Handle(2) ), -1 )
@@ -41,17 +36,19 @@ describe("TrivalStore", function(){
       assert.equal( testHdl.cmp( new Handle(0) ), 1 )
     })
 
-    it(".pack() should throw", function(){
-      assert.throws( function(){ testHdl.pack( testHdlBuf, 0 ) } )
-    })
   }) //TrivialStore.Handle
 
-  var val = "data"
-    , hdl
+  var hdl
+    , testObj = {
+      type: "Leaf"
+    , order: 3
+    , keys: ["a", "b"]
+    , children: [1, 2]
+    }
 
   describe(".store() method", function(){
-    it("should store the value \"data\" and callback with a valid Handle", function(done){
-      store.store(val, function(err, hdl_){
+    it("should store the testObj and callback with a valid Handle", function(done){
+      store.store(testObj, function(err, hdl_){
         if (err) { done(err); return }
         hdl = hdl_
         assert.ok(hdl instanceof Handle)
@@ -61,9 +58,10 @@ describe("TrivalStore", function(){
   })
 
   describe(".load() method", function(){
-    it("should load the previous Handle with value \"data\"", function(done){
+    it("should load the previous Handle with json object equiv to testObj", function(done){
       store.load(hdl, function(err, res) {
         if (err) { done(err); return }
+        assert.deepEqual(testObj, res)
         done()
       })
     })

@@ -32,10 +32,7 @@ describe("BpTree", function(){
     it("should put first key/data", function(next){
       keys.push(key)
       data.push(val)
-      tree.put(key, val, function(err){
-        if (err) throw err
-        next()
-      })
+      tree.put(key, val, next)
     })
 
     it("should get first key/data", function(next){

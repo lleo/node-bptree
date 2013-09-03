@@ -34,10 +34,6 @@ describe("MemStore nodelay", function(){
     it("cur.cmp(prev) should return 1", function(){
       assert.equal( testHdl.cmp( new Handle(0) ), 1 )
     })
-//
-//    it(".pack() should throw", function(){
-//      assert.throws( function(){ testHdl.pack( testHdlBuf, 0 ) } )
-//    })
   }) //MemStore.Handle
 
   var leafHdl
@@ -70,7 +66,7 @@ describe("MemStore nodelay", function(){
     it("should load the previous leaf Handle", function(done){
       store.load(leafHdl, function(err, o) {
         if (err) { done(err); return }
-        assert.ok( u.isEqual(l, o) )
+        assert.deepEqual(l, o)
         done()
       })
     })

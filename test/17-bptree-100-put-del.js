@@ -24,9 +24,9 @@ describe("BpTree-TrivialStore order=3", function(){
   var t = new BpTree(3, strOps.cmp, new TrivialStore())
 
   it("should insert an array k/v pairs", function(done){
-    async.mapSeries( kvs
-                   , function(kv, mcb){
-                       t.put(kv[0], kv[1], mcb)
+    async.mapSeries( Object.keys(kvs)
+                   , function(k, mcb){
+                       t.put(k, kvs[k], mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
@@ -35,13 +35,14 @@ describe("BpTree-TrivialStore order=3", function(){
   })
 
   it("should delete an array k/v pairs", function(done){
-    async.mapSeries( kvs
-                   , function(kv, mcb){
-                       t.del(kv[0], mcb)
+    async.mapSeries( Object.keys(kvs)
+                   , function(k, mcb){
+                       t.del(k, mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
                        assert.ok(t.root == null) //tree is empty
+                       done()
                      })
   })
 })
@@ -51,9 +52,9 @@ describe("BpTree-MemStore order=3", function(){
   var t = new BpTree(3, strOps.cmp, new MemStore())
 
   it("should insert an array k/v pairs", function(done){
-    async.mapSeries( kvs
-                   , function(kv, mcb){
-                       t.put(kv[0], kv[1], mcb)
+    async.mapSeries( Object.keys(kvs)
+                   , function(k, mcb){
+                       t.put(k , kvs[k], mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
@@ -62,13 +63,14 @@ describe("BpTree-MemStore order=3", function(){
   })
 
   it("should delete an array k/v pairs", function(done){
-    async.mapSeries( kvs
-                   , function(kv, mcb){
-                       t.del(kv[0], mcb)
+    async.mapSeries( Object.keys(kvs)
+                   , function(k, mcb){
+                       t.del(k, mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
                        assert.ok(t.root == null) //tree is empty
+                       done()
                      })
   })
 })
