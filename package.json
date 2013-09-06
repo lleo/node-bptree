@@ -15,7 +15,8 @@
 , "scripts"     : { "test" : "mocha -R spec -s 1" }
 , "dependencies": { "async"      : ">=0.2.6"
 		  , "lodash"     : ">=1.0.1"
-		  , "msgpack-js" : ">=0.3.0" }
+		  , "msgpack-js" : ">=0.3.0"
+		  , "block-file" : "*" }
 , "devDependencies": { "mocha" : "*"
 		     , "chai"  : "*" }
 , "engines"     : { "node" : ">=0.4.0" }

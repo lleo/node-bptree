@@ -1,7 +1,7 @@
 /* global describe it */
 
 var assert = require('assert')
-  , strCmp = require('../lib/str_cmp')
+  , strCmp = require('../lib/str_ops').cmp
 
 describe("strCmp - string compare funciton", function(){
   describe("comparing via string length first!", function(){
