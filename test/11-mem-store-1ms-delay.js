@@ -22,16 +22,9 @@ describe("MemStore nodelay", function(){
     })
 
     var testHdl = new Handle(1)
-    it("cur.cmp(next) should return -1", function(){
-      assert.equal( testHdl.cmp( new Handle(2) ), -1 )
-    })
 
-    it("cur.cmp(cur) should return 0", function(){
-      assert.equal( testHdl.cmp( new Handle(1) ), 0 )
-    })
-
-    it("cur.cmp(prev) should return 1", function(){
-      assert.equal( testHdl.cmp( new Handle(0) ), 1 )
+    it("cur.equals(cur) should return true", function(){
+      assert.ok( testHdl.equals( new Handle(1) ) )
     })
   }) //MemStore.Handle
 
