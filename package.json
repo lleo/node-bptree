@@ -17,7 +17,6 @@
 		  , "lodash"     : ">=1.0.1"
 		  , "msgpack-js" : ">=0.3.0"
 		  , "block-file" : "*" }
-, "devDependencies": { "mocha" : "*"
-		     , "chai"  : "*" }
+, "devDependencies": { "mocha" : "*" }
 , "engines"     : { "node" : ">=0.4.0" }
 }
