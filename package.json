@@ -1,7 +1,7 @@
 {
   "name"        : "BpTree"
-, "version"     : "0.2.0"
-, "description" : "A file based implementation of a B+Tree"
+, "version"     : "0.3.0"
+, "description" : "A implementation of a B+Tree with pluggable storage engines"
 , "keywords"    : ["tree", "b+tree", "index"]
 , "homepage"    : "https://github/com/lleo/node-bptree"
 , "repository"  : { "type": "git"
