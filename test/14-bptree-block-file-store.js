@@ -4,24 +4,34 @@
 
 var assert = require('assert')
   , BpTree = require('..')
-  , MemStore = require('../lib/mem_store')
+  , BlockFileStore = require('../lib/block_file_store')
   , Leaf = BpTree.Leaf
   , u = require('lodash')
   , async = require('async')
   , format = require('util').format
+  , block_file_fn = './test-bptree.bf'
+  , fs = require('fs')
 
-describe("BpTree", function(){
-  var tree, order=3
+describe("BpTree w/BlockFileStore "+block_file_fn, function(){
+  var store
+    , tree, order=3
     , keys = []
     , data = []
     , cur = 0
     , key = cur.toString()
     , val = cur
 
-  describe("Constructor w/MemStore", function(){
-    tree = new BpTree(order, null, new MemStore(1))
+  describe("Constructor w/BlockFileStore", function(){
+    it("should open the BlockFileStore fn="+block_file_fn, function(done){
+      BlockFileStore.open(block_file_fn, function(err, bfs){
+        if (err) { done(err); return }
+        store = bfs
+        done()
+      })
+    })
 
-    it("should construct an object", function(){
+    it("should construct an BpTree object", function(){
+      tree = new BpTree(order, null, store)
       assert.ok(tree instanceof BpTree)
     })
 
@@ -157,6 +167,17 @@ describe("BpTree", function(){
           next()
         })
     })
+  }) //delete all nodes
+
+  describe("", function(){
+    it("should close the store", function(done){
+      store.close(done)
+    })
+
+    it("should delete the underlying block file fn="+block_file_fn, function(done){
+      fs.unlink(block_file_fn, done)
+    })
+
   })
 })//BpTree
 

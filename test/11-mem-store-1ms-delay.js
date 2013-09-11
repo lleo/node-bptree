@@ -26,6 +26,12 @@ describe("MemStore nodelay", function(){
     it("cur.equals(cur) should return true", function(){
       assert.ok( testHdl.equals( new Handle(1) ) )
     })
+
+
+    it("cur.equals(!cur) should return false", function(){
+      assert.ok( !testHdl.equals( new Handle(2) ) )
+    })
+
   }) //MemStore.Handle
 
   var leafHdl
@@ -40,7 +46,8 @@ describe("MemStore nodelay", function(){
       type: "Branch"
     , order: 3
     , keys : [ "three" ]
-    , children: [ {"id":0} , {"id":4} ]
+    , children: [ {segNum : 0, blkNum : 3, spanNum : 0}
+                , {segNum : 0, blkNum : 7, spanNum : 0} ]
     }
 
   describe(".store() method", function(){
@@ -59,6 +66,27 @@ describe("MemStore nodelay", function(){
       store.load(leafHdl, function(err, o) {
         if (err) { done(err); return }
         assert.deepEqual(l, o)
+        done()
+      })
+    })
+  })
+
+  describe(".store() method", function(){
+    it("should store a Leaf and callback with a valid Handle", function(done){
+      store.store(b, function(err, hdl){
+        if (err) { done(err); return }
+        branchHdl = hdl
+        assert(branchHdl instanceof Handle, "branchHdl !instanceof Handle")
+        done()
+      })
+    })
+  })
+
+  describe(".load() method", function(){
+    it("should load the previous branch Handle", function(done){
+      store.load(branchHdl, function(err, o) {
+        if (err) { done(err); return }
+        assert.deepEqual(b, o)
         done()
       })
     })
