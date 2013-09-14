@@ -156,6 +156,10 @@ describe("BpTree w/MemStore 1ms delay", function(){
           next()
         })
     })
+
+    it("the internal stoage should be empty", function(){
+      assert.ok(Object.keys(tree.storage.buffers).length == 0)
+    })
   })
 })//BpTree
 

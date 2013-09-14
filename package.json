@@ -1,5 +1,4 @@
-{
-  "name"        : "BpTree"
+{ "name"        : "bptree"
 , "version"     : "0.3.0"
 , "description" : "A implementation of a B+Tree with pluggable storage engines"
 , "keywords"    : ["tree", "b+tree", "index"]
@@ -16,9 +15,30 @@
 , "dependencies": { "async"      : ">=0.2.6"
 		  , "lodash"     : ">=1.0.1"
 		  , "msgpack-js" : ">=0.3.0"
+		  , "stats-api"  : "*"
 		  , "block-file" : "*" }
 , "devDependencies": { "mocha" : "*" }
 , "engines"     : { "node" : ">=0.4.0" }
 , "files"       : [ "package.json"
+		  , "README.md"
+                  , "lib/bptree.js"
+                  , "lib/node.js"
+                  , "lib/branch.js"
+                  , "lib/leaf.js"
+                  , "trivial_store.js"
+                  , "mem_store.js"
+                  , "block_file_store.js"
+                  , "lib/str_ops.js"
+                  , "lib/rand_ops.js"
+                  , "test/01-str-cmp.js"
+                  , "test/02-store-trivial.js"
+                  , "test/03-bptree-basics.js"
+                  , "test/10-mem-store-nodelay.js"
+                  , "test/11-mem-store-1ms-delay.js"
+                  , "test/12-bptree-mem-store-1ms-delay.js"
+                  , "test/13-block-file-store.js"
+                  , "test/14-bptree-block-file-store.js"
+                  , "test/15-bptree-mem-store-100-put-del.js"
+                  , "test/16-bptree-block-file-store-100-put-del.js"
                   ]
 }

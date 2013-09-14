@@ -16,7 +16,7 @@ describe("BpTree", function(){
     , val = cur
 
   describe("Constructor", function(){
-    tree = new BpTree(order)
+    tree = new BpTree(order) //defaults to TrivialStore
 
     it("should construct an object", function(){
       assert.ok(tree instanceof BpTree)
@@ -151,6 +151,10 @@ describe("BpTree", function(){
           assert.ok( u.isEqual(data, res) )
           next()
         })
+    })
+
+    it("the internal stoage should be empty", function(){
+      assert.ok(Object.keys(tree.storage.things).length == 0)
     })
   })
 })//BpTree
