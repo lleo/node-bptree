@@ -22,12 +22,12 @@ for (val=0; val<100; val++) {
 
 
 describe("BpTree-TrivialStore order=3; Insert & Delete 100 k/v pairs", function(){
-  var tree = new BpTree(3, strOps.cmp, new TrivialStore())
+  var bpt = new BpTree(3, strOps.cmp, new TrivialStore())
 
   it("should insert an array k/v pairs", function(done){
     async.mapSeries( Object.keys(kvs)
                    , function(k, mcb){
-                       tree.put(k, kvs[k], mcb)
+                       bpt.put(k, kvs[k], mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
@@ -38,30 +38,30 @@ describe("BpTree-TrivialStore order=3; Insert & Delete 100 k/v pairs", function(
   it("should delete an array k/v pairs", function(done){
     async.mapSeries( Object.keys(kvs)
                    , function(k, mcb){
-                       tree.del(k, mcb)
+                       bpt.del(k, mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
-                       assert.ok(tree.root == null) //tree is empty
+                       assert.ok(bpt.root == null) //bpt is empty
                        done()
                      })
   })
 
   it("the internal stoage should be empty", function(){
-    assert.ok( Object.keys(tree.storage.things).length == 0
-             , format("Object.keys(tree.storage.things)= %j"
-                     , Object.keys(tree.storage.things)) )
+    assert.ok( Object.keys(bpt.storage.things).length == 0
+             , format("Object.keys(bpt.storage.things)= %j"
+                     , Object.keys(bpt.storage.things)) )
   })
 })
 
 
 describe("BpTree-MemStore order=3; Insert & Delete 100 k/v pairs", function(){
-  var tree = new BpTree(3, strOps.cmp, new MemStore())
+  var bpt = new BpTree(3, strOps.cmp, new MemStore())
 
   it("should insert an array k/v pairs", function(done){
     async.mapSeries( Object.keys(kvs)
                    , function(k, mcb){
-                       tree.put(k , kvs[k], mcb)
+                       bpt.put(k , kvs[k], mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
@@ -72,19 +72,19 @@ describe("BpTree-MemStore order=3; Insert & Delete 100 k/v pairs", function(){
   it("should delete an array k/v pairs", function(done){
     async.mapSeries( Object.keys(kvs)
                    , function(k, mcb){
-                       tree.del(k, mcb)
+                       bpt.del(k, mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
-                       assert.ok(tree.root == null) //tree is empty
+                       assert.ok(bpt.root == null) //bpt is empty
                        done()
                      })
   })
 
   it("the internal stoage should be empty", function(){
-    assert.ok( Object.keys(tree.storage.buffers).length == 0
-             , format("Object.keys(tree.storage.buffers)= %j"
-                     , Object.keys(tree.storage.buffers)) )
+    assert.ok( Object.keys(bpt.storage.buffers).length == 0
+             , format("Object.keys(bpt.storage.buffers)= %j"
+                     , Object.keys(bpt.storage.buffers)) )
   })
 
 })

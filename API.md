@@ -71,6 +71,22 @@ Store
     Handle = Store.Handle
     
     /**
+     * Get root Handle
+     *
+	 * @return {Function} cb cb(err, hdl)
+     * @return {Handle} can be null if it is a transitory Store (eg MemStore)
+     */
+    hdl = store.getRootHandle(cb)
+
+    /**
+	 * Store root Handle in its special place (don't ask:)
+	 *
+	 * @param {Handle} hdl
+	 * @param {Function} cb cb(err)
+	 */
+	store.storeRootHandle(hdl, cb)
+
+    /**
      * Reserve a handle for a given sized buffer.
      *
      * @param {Number} sz an integer number of bytes the handle must represent

@@ -22,16 +22,14 @@ for (val=0; val<100; val++) {
 
 
 describe("BpTree-BlockFileStore order=3; Insert & Delete 100 k/v pairs", function(){
-  var t, bfs
+  var bpt
 
   it("should open and create a BpTree w/BlockFileStore", function(done){
-    BlockFileStore.open(block_file_fn, function(err, bfs_){
+    BlockFileStore.open(block_file_fn, function(err, bfs){
       if (err) { done(err); return }
-      bfs = bfs_
-      t = new BpTree(3, strOps.cmp, bfs)
-      done()
+      bpt = new BpTree(3, strOps.cmp, bfs)
+      bpt.loadRootHandle(done)
     })
-
   })
 
   it("should insert an array k/v pairs", function(done){
@@ -39,12 +37,28 @@ describe("BpTree-BlockFileStore order=3; Insert & Delete 100 k/v pairs", functio
 
     async.mapSeries( Object.keys(kvs)
                    , function(k, mcb){
-                       t.put(k, kvs[k], mcb)
+                       bpt.put(k, kvs[k], mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
                        done()
                      })
+  })
+
+  it("should .close the BlockFile", function(done){
+    bpt.storage.close(function(err){
+      if (err) { done(err); return }
+      bpt = undefined
+      done()
+    })
+  })
+
+  it("should re-open the BpTree w/BlockFileStore", function(done){
+    BlockFileStore.open(block_file_fn, function(err, bfs){
+      if (err) { done(err); return }
+      bpt = new BpTree(3, strOps.cmp, bfs)
+      bpt.loadRootHandle(done)
+    })
   })
 
   it("should delete an array k/v pairs", function(done){
@@ -52,18 +66,42 @@ describe("BpTree-BlockFileStore order=3; Insert & Delete 100 k/v pairs", functio
 
     async.mapSeries( Object.keys(kvs)
                    , function(k, mcb){
-                       t.del(k, mcb)
+                       bpt.del(k, mcb)
                      }
                    , function(err, res){
                        if (err) { done(err); return }
-                       assert.ok(t.root == null) //tree is empty
+                       assert.ok(bpt.root == null) //tree is empty
                        done()
                      })
   })
 
+  it("should .close the BlockFile", function(done){
+    bpt.storage.close(function(err){
+      if (err) { done(err); return }
+      bpt = undefined
+      done()
+    })
+  })
+
+  it("should re-open the BpTree w/BlockFileStore", function(done){
+    BlockFileStore.open(block_file_fn, function(err, bfs){
+      if (err) { done(err); return }
+      bpt = new BpTree(3, strOps.cmp, bfs)
+      bpt.loadRootHandle(done)
+    })
+  })
+
+  it("should be empty; bpt.root === null", function(){
+    assert.ok( bpt.root === null )
+  })
+
   it("should close and delete the block_file_fn="+block_file_fn, function(done){
-    fs.unlinkSync(block_file_fn)
-    bfs.close(done)
+    bpt.storage.close(function(err){
+      if (err) { done(err); return }
+      fs.unlinkSync(block_file_fn)
+      bpt = undefined
+      done()
+    })
   })
 })
 
