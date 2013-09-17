@@ -1,5 +1,5 @@
 { "name"        : "bptree"
-, "version"     : "0.3.0"
+, "version"     : "0.4.0"
 , "description" : "A implementation of a B+Tree with pluggable storage engines"
 , "keywords"    : ["tree", "b+tree", "index"]
 , "homepage"    : "https://github/com/lleo/node-bptree"
