@@ -54,38 +54,44 @@ cmdLine
 .option('-d|--deletion [key-order]', "Order of deletion: inorder, (rev)erse, (rand)omize", keyOrder, 'inorder')
 .option('-i|--insertion [key-order]', "Order of insertion: inorder, (rev)erse, (rand)omize", keyOrder, 'inorder')
 .option('-D|--io-delay <ms>', "Delay each delete (milliseconds)", parseInt, -1)
-.option('--no-delete-keys', "Don't delete the keys")
-.option('--no-display-put', "Don't display each tree.put() call")
-.option('--no-display-del', "Don't display each tree.del() call")
-.option('--no-display-modified', "Don't display the tree after each delete")
 .option('-S|--use-store <store>', "IO Store to use '(mem)ory', '(triv)ial', block-(file)", parseStore, 'TrivialStore')
+.option('--show-foreach', "show each k,v pair via .forEach")
+.option('--no-delete-keys', "Don't delete the keys")
+.option('--display-put', "Display each tree.put() call")
+.option('--display-del', "Display each tree.del() call")
+.option('--display-modified', "Display the tree after each delete")
+.option('--no-display-final', "Don't display the final tree")
 .option('--stats', "Show all stats")
 .parse(process.argv)
-
-console.log("order             = %d", cmdLine.order)
-console.log("number            = %d", cmdLine.number)
-console.log("insertion         = %s", cmdLine.insertion)
-console.log("deletion          = %s", cmdLine.deletion)
-console.log("io-delay          = %d", cmdLine.ioDelay)
-console.log("delete-keys       = %j", cmdLine.deleteKeys)
-console.log("display-put       = %j", cmdLine.displayPut)
-console.log("display-del       = %j", cmdLine.displayDel)
-console.log("display-modified  = %j", cmdLine.displayModified)
-console.log("use-store         = %s", cmdLine.useStore)
-console.log("stats             = %s", cmdLine.stats)
-//process.exit(0)
 
 var order = cmdLine.order
   , numEnts = cmdLine.number
   , insOrder = cmdLine.insertion
   , delOrder = cmdLine.deletion
   , ioDelay = cmdLine.ioDelay
-  , deleteKeys = cmdLine.deleteKeys
-  , displayPut = cmdLine.displayPut
-  , displayDel = cmdLine.displayDel
-  , displayModified = cmdLine.displayModified
   , useStore = cmdLine.useStore
+  , showForeach = cmdLine.showForeach ? true : false
+  , deleteKeys = cmdLine.deleteKeys ? true : false
+  , displayPut = cmdLine.displayPut ? true : false
+  , displayDel = cmdLine.displayDel ? true : false
+  , displayModified = cmdLine.displayModified ? true : false
+  , displayFinal = cmdLine.displayFinal ? true : false
   , showStats = cmdLine.stats ? true : false
+
+console.log("order             = %d", order)
+console.log("number            = %d", numEnts)
+console.log("insertion         = %s", insOrder)
+console.log("deletion          = %s", delOrder)
+console.log("io-delay          = %d", ioDelay)
+console.log("use-store         = %s", useStore)
+console.log("show-foreach      = %j", showForeach)
+console.log("delete-keys       = %j", deleteKeys)
+console.log("display-put       = %j", displayPut)
+console.log("display-del       = %j", displayDel)
+console.log("display-modified  = %j", displayModified)
+console.log("display-final     = %j", displayFinal)
+console.log("stats             = %s", showStats)
+//process.exit(0)
 
 var displayNodeConcise = (
   function(){
@@ -149,125 +155,127 @@ if (delOrder == "randomize")
 else if (delOrder == "reverse")
   delKeys.reverse()
 
-var createBpTree = function(scb){
-      var store
-      if (useStore == 'MemStore') {
-        store = new MemStore(ioDelay)
-        tree = new BpTree(order, strOps.cmp, store)
-        scb()
-      }
-      else if (useStore == 'TrivialStore') {
-        store = new TrivialStore(ioDelay)
-        tree = new BpTree(order, strOps.cmp, store)
-        scb()
-      }
-      else if (useStore == 'BlockFileStore') {
-        BlockFile.open(perm_fn, function(err, bf){
-          if (err) { scb(err); return }
-          store = new BlockFileStore(bf)
-          tree = new BpTree(order, strOps.cmp, store)
-          scb()
-        })
-      }
-      else throw new Error("WTF! useStore="+useStore)
-    }
-  , buildTree =  function(scb){
-      console.log("")
-      console.log("Build Tree: %d tree.put() calls", keys.length)
-      console.log("----------")
-      async.eachSeries(
-        insKeys
-      , function(k, ecb){
-          if (displayPut) process.stdout.write(format("tree.put( %s, %d )", k, kv[k]))
-          tree.put(k, kv[k], function(err){
-            if (err) {
-              if (displayPut) process.stdout.write(" failed.\n")
-              console.error(err)
-              ecb(err)
-              return
-            }
-            if (displayPut) process.stdout.write(" success\n")
-            ecb()
-          })
-        }
-      , function(err){
-          if (err) { scb(err); return }
-          console.log("")
-          console.log("Initial Tree")
-          console.log("------------")
-          tree.traverseInOrder(displayNode, scb)
-        })
-    }
-  , delTree = function(scb){
-      console.log("")
+function createBpTree(scb){
+  var store
+  if (useStore == 'MemStore') {
+    store = new MemStore(ioDelay)
+    tree = new BpTree(strOps.cmp, store, { order: order })
+    scb()
+  }
+  else if (useStore == 'TrivialStore') {
+    store = new TrivialStore(ioDelay)
+    tree = new BpTree(strOps.cmp, store, { order: order })
+    scb()
+  }
+  else if (useStore == 'BlockFileStore') {
+    BlockFile.open(perm_fn, function(err, bf){
+      if (err) { scb(err); return }
+      store = new BlockFileStore(bf)
+      tree = new BpTree(strOps.cmp, store, { order: order })
+      scb()
+    })
+  }
+  else throw new Error("WTF! useStore="+useStore)
+}
 
-      async.eachSeries(
-        delKeys
-      , function(k, ecb){
-          if (displayDel) process.stdout.write(format("tree.del(%s)", k))
-
-          tree.del(k, function(err){
-            if (err) {
-              if (displayDel) process.stdout.write(" failed.\n")
-              console.error(err)
-              ecb(err)
-              return
-            }
-            if (displayDel) process.stdout.write(" success.\n")
-            if (displayModified) {
-              console.log("--- Modified Tree ---")
-              if (tree.root == null)
-                console.log("tree.root == null")
-              else
-                tree.traverseInOrder(displayNode, function(err, res){
-                  console.log("")
-                  ecb(err, res)
-                })
-            }
-            else
-              ecb()
-          })
+function buildTree(scb){
+  console.log("")
+  console.log("--- Build Tree: %d tree.put() calls", keys.length)
+  async.eachSeries(
+    insKeys
+  , function(k, ecb){
+      if (displayPut) process.stdout.write(format("tree.put( %s, %d )", k, kv[k]))
+      tree.put(k, kv[k], function(err){
+        if (err) {
+          if (displayPut) process.stdout.write(" failed.\n")
+          console.error(err)
+          ecb(err)
+          return
         }
-      , function(err){
-          if (err) { scb(err); return }
-          scb()
-        })
-    }
-  , displayFinalTree = function(scb){
-      console.log("")
-      console.log("FINAL TREE")
-      console.log("----------")
-      tree.traverseInOrder(displayNode, function(err, res){
-        if (err) console.log("err = %j", err)
-        else     console.log("res = %j", u.flatten(res))
-        scb(null)
+        if (displayPut) process.stdout.write(" success\n")
+        ecb()
       })
     }
-  , executeForeach = function(scb){
+  , function(err){
+      if (err) { scb(err); return }
       console.log("")
-      console.log("FOREACH(key, val)")
-      console.log("-----------------")
-      tree.forEach(function(k,v){
-        console.log("k = %s; v = %s;", k, v)
-      }, scb)
+      console.log("--- Initial Tree ---")
+      tree.traverseInOrder(displayNode, scb)
+    })
+}
+
+function delTree(scb){
+  console.log("")
+  console.log("--- Deleting Keys ---")
+//  console.log("delKeys=%j", delKeys)
+
+  async.eachSeries(
+    delKeys
+  , function(k, ecb){
+      if (displayDel) process.stdout.write(format("tree.del(%s)", k))
+
+      tree.del(k, function(err){
+        if (err) {
+          if (displayDel) process.stdout.write(" failed.\n")
+          console.error(err)
+          ecb(err)
+          return
+        }
+        if (displayDel) process.stdout.write(" success.\n")
+        if (displayModified) {
+          console.log("--- Modified Tree ---")
+          if (tree.root == null) {
+            console.log("tree.root == null")
+            ecb()
+          }
+          else
+            tree.traverseInOrder(displayNode, ecb)
+        }
+        else
+          ecb()
+      })
     }
-  , steps = []
+//  , scb)
+  , function(err){
+      if (err) { scb(err); return }
+//      console.log("END async.eachSeries(delKeys, ...)")
+      scb()
+    })
+}
+
+function displayFinalTree(scb){
+  console.log("")
+  console.log("--- FINAL TREE ---")
+  if (tree.root == null) {
+    console.log("tree.root == null")
+    scb()
+  }
+  else
+    tree.traverseInOrder(displayNode, scb)
+}
+
+function executeForeach(scb){
+  console.log("")
+  console.log("--- FOREACH(key, val) ---")
+  tree.forEach(function(k,v){
+    console.log("k = %s; v = %s;", k, v)
+  }, scb)
+}
+
+var steps = []
 
 steps.push(createBpTree)
 steps.push(buildTree)
 if (deleteKeys) {
   steps.push(delTree)
-  steps.push(displayFinalTree)
 }
-steps.push(executeForeach)
+if (displayFinal) steps.push(displayFinalTree)
+if (showForeach) steps.push(executeForeach)
 
 async.series(
   steps
 , function(err, res){
     if (err) throw err
-
-    //console.log("res = %j", u.flatten(res)) //results of
-    //console.log("")
 
     if (tree.storage instanceof TrivialStore) {
       var cruft = Object.keys(tree.storage.things)

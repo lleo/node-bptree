@@ -22,7 +22,7 @@ for (val=0; val<100; val++) {
 
 
 describe("BpTree-TrivialStore order=3; Insert & Delete 100 k/v pairs", function(){
-  var bpt = new BpTree(3, strOps.cmp, new TrivialStore())
+  var bpt = new BpTree(strOps.cmp, new TrivialStore(), {order: 3})
 
   it("should insert an array k/v pairs", function(done){
     async.mapSeries( Object.keys(kvs)
@@ -56,7 +56,7 @@ describe("BpTree-TrivialStore order=3; Insert & Delete 100 k/v pairs", function(
 
 
 describe("BpTree-MemStore order=3; Insert & Delete 100 k/v pairs", function(){
-  var bpt = new BpTree(3, strOps.cmp, new MemStore())
+  var bpt = new BpTree(strOps.cmp, new MemStore(), {order: 3})
 
   it("should insert an array k/v pairs", function(done){
     async.mapSeries( Object.keys(kvs)

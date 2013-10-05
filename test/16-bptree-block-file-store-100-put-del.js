@@ -27,8 +27,8 @@ describe("BpTree-BlockFileStore order=3; Insert & Delete 100 k/v pairs", functio
   it("should open and create a BpTree w/BlockFileStore", function(done){
     BlockFileStore.open(block_file_fn, function(err, bfs){
       if (err) { done(err); return }
-      bpt = new BpTree(3, strOps.cmp, bfs)
-      bpt.loadRootHandle(done)
+      bpt = new BpTree(strOps.cmp, bfs, {order: 3})
+      bpt.loadRoot(done)
     })
   })
 
@@ -56,8 +56,8 @@ describe("BpTree-BlockFileStore order=3; Insert & Delete 100 k/v pairs", functio
   it("should re-open the BpTree w/BlockFileStore", function(done){
     BlockFileStore.open(block_file_fn, function(err, bfs){
       if (err) { done(err); return }
-      bpt = new BpTree(3, strOps.cmp, bfs)
-      bpt.loadRootHandle(done)
+      bpt = new BpTree(strOps.cmp, bfs, {order: 3})
+      bpt.loadRoot(done)
     })
   })
 
@@ -86,8 +86,8 @@ describe("BpTree-BlockFileStore order=3; Insert & Delete 100 k/v pairs", functio
   it("should re-open the BpTree w/BlockFileStore", function(done){
     BlockFileStore.open(block_file_fn, function(err, bfs){
       if (err) { done(err); return }
-      bpt = new BpTree(3, strOps.cmp, bfs)
-      bpt.loadRootHandle(done)
+      bpt = new BpTree(strOps.cmp, bfs, {order: 3})
+      bpt.loadRoot(done)
     })
   })
 
