@@ -16,7 +16,8 @@ describe("BpTree", function(){
     , val = cur
 
   describe("Constructor", function(){
-    tree = new BpTree(order) //defaults to TrivialStore
+    //defaults to strCmp & TrivialStore & order=3
+    tree = new BpTree()
 
     it("should construct an object", function(){
       assert.ok(tree instanceof BpTree)

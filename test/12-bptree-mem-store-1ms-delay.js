@@ -20,7 +20,8 @@ describe("BpTree w/MemStore 1ms delay", function(){
 
   describe("Constructor w/MemStore", function(){
     it("should construct an object", function(){
-      tree = new BpTree(order, null, new MemStore(1))
+      //defaults to strCmp
+      tree = new BpTree(null, new MemStore(1), {order: order})
       assert.ok(tree instanceof BpTree)
     })
 

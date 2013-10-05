@@ -14,7 +14,7 @@ var assert = require('assert')
 
 describe("BpTree w/BlockFileStore "+block_file_fn, function(){
   var store
-    , tree, order=3
+    , tree
     , keys = []
     , data = []
     , cur = 0
@@ -31,7 +31,8 @@ describe("BpTree w/BlockFileStore "+block_file_fn, function(){
     })
 
     it("should construct an BpTree object", function(){
-      tree = new BpTree(order, null, store)
+      //defaults to strCmp & order=3
+      tree = new BpTree(null, store)
       assert.ok(tree instanceof BpTree)
     })
 
@@ -169,7 +170,7 @@ describe("BpTree w/BlockFileStore "+block_file_fn, function(){
     })
   }) //delete all nodes
 
-  describe("", function(){
+  describe("close the store & delete the block file", function(){
     it("should close the store", function(done){
       store.close(done)
     })
