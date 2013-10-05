@@ -36,15 +36,15 @@ describe("TrivalStore", function(){
 
   }) //TrivialStore.Handle
 
-  describe(".handleToJSON() method", function(){
+  describe(".handleToJson() method", function(){
     it("should convert a Handle to an JSON Object", function(){
-      assert.ok( u.isEqual( store.handleToJSON(testHdl), testJson ) )
+      assert.ok( u.isEqual( store.handleToJson(testHdl), testJson ) )
     })
   })
 
-  describe(".handleFromJSON() method", function(){
+  describe(".handleFromJson() method", function(){
     it("should convert a JSON object to a Handle", function(){
-      assert.ok( testHdl.equals( store.handleFromJSON(testJson) ) )
+      assert.ok( testHdl.equals( store.handleFromJson(testJson) ) )
     })
   })
 
