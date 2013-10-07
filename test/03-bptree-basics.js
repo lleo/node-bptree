@@ -41,15 +41,12 @@ describe("BpTree", function(){
       })
     })
 
-    it("use .findLeaf to find the leaf and path", function(next){
-      tree.findLeaf('0', function(err, leaf, path){
+    it("use .findDepth to confirm the depth is 1", function(next){
+      tree.findDepth(function(err, depth){
         if (err) { next(err); return }
-        if ( path.length != 0 )
-          next(new Error("path not zero"))
-        else if ( !(leaf instanceof Leaf) )
-          next(new Error("leaf not a Leaf"))
-        else
-          next()
+        if (depth != 1)
+          next(new Error("depth is not 1; depth="+depth))
+        else next()
       })
     })
 
@@ -77,12 +74,11 @@ describe("BpTree", function(){
       , function(err, res) {
           if (err) { next(err); return }
 
-          //use the last key/val pair
-          tree.findLeaf(key, function(err, leaf, path){
-            if (path.length != 1)
-              next(new Error("path is not 1"))
-            else
-              next()
+          tree.findDepth(function(err, depth){
+            if (err) { next(err); return }
+            if (depth != 2)
+              next(new Error("depth is not 2; depth="+depth))
+            else next()
           })
         })
     })
@@ -129,12 +125,11 @@ describe("BpTree", function(){
       , function(err, res) {
           if (err) next(err)
 
-          //use the last key/val pair
-          tree.findLeaf(key, function(err, leaf, path){
-            if (path.length != 2)
-              next(new Error("path is not 2"))
-            else
-              next()
+          tree.findDepth(function(err, depth){
+            if (err) { next(err); return }
+            if (depth != 3)
+              next(new Error("depth is not 3; depth="+depth))
+            else next()
           })
         })//async.series
     })//it
