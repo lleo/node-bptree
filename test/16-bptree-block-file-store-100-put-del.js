@@ -20,12 +20,15 @@ for (val=0; val<100; val++) {
   kvs.push([ key, val ])
 }
 
+try { fs.unlinkSync(block_file_fn) }
+catch (x) {  }
+
 
 describe("BpTree-BlockFileStore order=3; Insert & Delete 100 k/v pairs", function(){
   var bpt
 
   it("should open and create a BpTree w/BlockFileStore", function(done){
-    BlockFileStore.open(block_file_fn, function(err, bfs){
+    BlockFileStore.create(block_file_fn, function(err, bfs){
       if (err) { done(err); return }
       bpt = new BpTree(strOps.cmp, bfs, {order: 3})
       bpt.loadRoot(done)

@@ -6,8 +6,36 @@ var assert = require('assert')
   , u = require('lodash')
   , async = require('async')
   , format = require('util').format
+  , utils = require('../lib/utils')
+  , repeatStr = require('../lib/str_ops').repeat
 
-describe("BpTree", function(){
+function visit(node, isLeaf, depth){
+  var kstr = ""
+    , cstr = ""
+    , indent = repeatStr("  ", depth)
+
+  kstr += format('"%s"', node.keys[0])
+  for (var i=1; i<node.keys.length; i+=1) {
+    kstr += format(', "%s"', node.keys[i])
+  }
+
+  cstr += format('"%s"', node.children[0])
+  for (var j=1; j<node.children.length; j+=1) {
+    cstr += format(', "%s"', node.children[j])
+  }
+
+  utils.log("%skeys=%s", indent, kstr)
+  utils.log("%schildren=%s", indent, cstr)
+}
+
+function displayTree(bpt, cb) {
+  bpt.traverseInOrder(visit, function(err, res){
+    utils.log("=== DONE ===")
+    cb(err)
+  })
+}
+
+describe("BpTree:", function(){
   var tree, order=3
     , keys = []
     , data = []
@@ -139,9 +167,9 @@ describe("BpTree", function(){
     it("should delete all the keys", function(next){
       async.mapSeries(
         keys
-        , function(key, mcb){
-           tree.del(key, mcb)
-         }
+      , function(key, mcb){
+          tree.del(key, mcb)
+        }
       , function(err, res){
           if (err) { next(err); return }
           assert.ok( u.isEqual(data, res) )
